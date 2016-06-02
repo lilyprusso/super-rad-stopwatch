@@ -35,7 +35,8 @@
 	}
 	span{
 		color:white;
-		font-size: 30px;
+		font-size: 20px;
+		font-family:Baskerville;
 	}
 	h2{
 		color:white;
@@ -53,35 +54,36 @@
 	<div class="wrapper">
 		<span>{ time }</span>
 		<br>
-		<span>{ lap }</span>
-		<br>
 		<br>
 		<button onclick={ toggleTimer }>{ controlName }</button>
 		<button onclick={ reset }>Reset</button>
-		<button onclick={ addLap } if={ timerActive }>Lap</button> 
-
-		<h2>laps</h2>
-		<ul id="laps">
-			<li if={ !laps.length }></li>
-			<li each={ o, i in laps }>&bull; { o }</li>
-		</ul>		
+		<button onclick={ addFinish } if={ timerActive }>Finish</button> 
+		<br>
+		<br>
+		<button onclick={ saveTime }>Save</button>
+		<br>
+		<br>
+		<div>
+			<span>{ finish.length } Runner<span if={ finish.length !== 1 }>s</span> Finished</span>
+		</div>
 	</div>
 
+
 	<script>
+
+
+
 	var self = this;
 
 	self.controlName = 'Start';
-	self.laps = [];
+	self.finish = [];
 	var _start = 0;
 	var _elapsed = 0;
-	var _lap_elapsed = 0;
-	var _lap = 0;
 
 	self.toggleTimer = function () {
 		self.timerActive = !self.timerActive;
 		if (!self.timerActive) {
 			_elapsed = (new Date() - _start)/10 + _elapsed;
-			_lap_elapsed = (new Date() - _lap)/10 + _lap_elapsed;
 			self.controlName = 'Start';
 			self.killTimer();
 		} else {
@@ -95,7 +97,6 @@
 	self.runTimer = function () {
 		self.interval = setInterval(function () {
 			self.writeTime((new Date() - _start)/10 + _elapsed);
-			self.writeLap((new Date() - _lap)/10 + _lap_elapsed);
 			self.update();
 		}, 10);
 	};
@@ -107,11 +108,11 @@
 	self.reset = function () {
 		_start = new Date();
 		_elapsed = 0;
-		_lap_elapsed = 0;
 		self.writeTime(0);
-		self.writeLap(0);
-		self.laps = [];
 		self.update();
+		self.killTimer();
+		self.controlName = 'Start';
+		self.timerActive = false
 	};
 
 	self.writeTime = function (time) {
@@ -119,20 +120,24 @@
 		self.update();
 	};
 
-	self.writeLap = function (time) {
-		self.lap = numeral(time).format('00:00:00:00');
+	self.addFinish = function () {
+		self.finish.push(self.time);
 		self.update();
 	};
 
-	self.addLap = function () {
-		self.laps.push(self.lap);
-		_lap = new Date();
-		_lap_elapsed = 0;
-		self.lap = 0;
-		self.update();
-	};
+	self.saveTime = function(){
+		// var name = prompt("Enter Timer Name")
+		// self.killTimer();
+		// self.controlName = 'Start';
+		// self.timerActive = false;
+		// var data = {
+		// 	name: name,
+		// 	time: self.time,
+		// 	timestamp: new Date(),			
+		// };
+		// console.log(data)
+	}
 
 	self.writeTime(0);
-	self.writeLap(0);
-	</script>
+		</script>
 </timer>
